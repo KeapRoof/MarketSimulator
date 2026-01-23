@@ -1,4 +1,4 @@
-package java.assets;
+package com.market.assets;
 
 public class Asset {
     private String name;

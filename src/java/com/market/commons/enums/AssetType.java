@@ -1,4 +1,4 @@
-package java.commons.enums;
+package com.market.commons.enums;
 
 public enum AssetType {
     STOCK,
