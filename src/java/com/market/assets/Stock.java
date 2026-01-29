@@ -10,7 +10,7 @@ public class Stock extends Asset {
     private LocalTime marketCloseTime;
 
     public Stock(String name, String ticker, double price, float yield, LocalTime open, LocalTime close) {
-        super(name, ticker, price, 0.01, AssetType.STOCK);
+        super(name, ticker, price, 0.01, AssetType.Stock);
         this.dividendYield = yield;
         this.marketOpenTime = open;
         this.marketCloseTime = close;

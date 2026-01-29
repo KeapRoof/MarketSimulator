@@ -1,4 +1,4 @@
-package com.market.dbconnextion;
+package com.market.db.connection;
 
 import java.sql.*;
 
