@@ -11,7 +11,8 @@ CREATE TABLE assets (
     ticker VARCHAR(10) UNIQUE NOT NULL,
     name VARCHAR(100) NOT NULL,
     asset_type VARCHAR(50) NOT NULL,
-    price DECIMAL(15, 2) NOT NULL
+    price DECIMAL(15, 2) NOT NULL,
+    volatility_rate DECIMAL(5, 2) DEFAULT 0.00
 );
 
 CREATE TABLE wallets (
@@ -28,9 +29,10 @@ INSERT INTO users (username, password, balance) VALUES
 ('bob', 'securepass', 15000.00),
 ('charlie', 'mypassword', 20000.00);
 
-INSERT INTO assets (ticker, name, asset_type, price) VALUES
-('AAPL', 'Apple Inc.', 'Stock', 150.00),
-('GOOGL', 'Alphabet Inc.', 'Stock', 2800.00),
-('BTC', 'Bitcoin', 'Crypto', 45000.00),
-('ETH', 'Ethereum', 'Crypto', 3000.00);
+INSERT INTO assets (ticker, name, asset_type, price,volatility_rate) VALUES
+('AAPL', 'Apple Inc.', 'Stock', 150.00, 0.01),
+('MSFT', 'Microsoft Corporation', 'Stock', 300.00, 0.02),
+('GOOGL', 'Alphabet Inc.', 'Stock', 2800.00, 0.03),
+('BTC', 'Bitcoin', 'Crypto', 45000.00, 0.07),
+('ETH', 'Ethereum', 'Crypto', 3000.00, 0.05);
 

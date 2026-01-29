@@ -1,4 +1,8 @@
+import com.market.assets.Asset;
+import com.market.db.dao.AssetDao;
+
 import java.sql.*;
+import java.util.List;
 import java.util.Scanner;
 
 
@@ -10,17 +14,8 @@ public class Main {
 
     public static void main(String[] args) {
 
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Market Simulation Started");
-        System.out.print("Username : ");
-        String username = scanner.nextLine();
-        System.out.print("Password : ");
-        String password = scanner.nextLine();
-
-        if (!authenticate(username, password)) {
-            System.out.println("Authentication failed. Exiting.");
-            return;
-        }
+        AssetDao assetDao = new AssetDao();
+        List<Asset> market =  assetDao.getAllAssets();
 
 
     }
