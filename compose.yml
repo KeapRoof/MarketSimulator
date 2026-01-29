@@ -10,6 +10,8 @@ services:
         MARIADB_PASSWORD: market_pass
       volumes:
         - ./db/init.sql:/docker-entrypoint-initdb.d/01-init.sql
+      ports:
+        - "3306:3306"
 
     adminer:
       image: adminer
