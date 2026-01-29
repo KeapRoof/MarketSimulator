@@ -1,0 +1,18 @@
+services:
+
+    db:
+      image: mariadb
+      restart: always
+      environment:
+        MARIADB_ROOT_PASSWORD: example
+        MARIADB_DATABASE: market
+        MARIADB_USER: market_user
+        MARIADB_PASSWORD: market_pass
+      volumes:
+        - ./db/init.sql:/docker-entrypoint-initdb.d/01-init.sql
+
+    adminer:
+      image: adminer
+      restart: always
+      ports:
+        - 8080:8080
