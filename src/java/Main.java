@@ -1,5 +1,5 @@
 import com.market.assets.Asset;
-import com.market.db.dao.AssetDao;
+import com.market.db.dao.AssetDAO;
 
 import java.sql.*;
 import java.util.List;
@@ -31,10 +31,10 @@ public class Main {
     private static boolean authenticate(String username, String password) {
 
         String sql = """
-            SELECT password
-            FROM users
-            WHERE username = ?
-        """;
+                    SELECT password
+                    FROM users
+                    WHERE username = ?
+                """;
 
         try (Connection conn = DriverManager.getConnection(
                 DB_URL, DB_USER, DB_PASS);
@@ -60,8 +60,8 @@ public class Main {
 
     private static void showMenu(Scanner scanner) {
         int choice = -1;
-        AssetDao assetDao = new AssetDao();
-        List<Asset> market =  assetDao.getAllAssets();
+        AssetDAO assetDao = new AssetDAO();
+        List<Asset> market = assetDao.getAll();
 
         while (choice != 6) {
             System.out.println();
@@ -85,7 +85,8 @@ public class Main {
             scanner.nextLine();
 
             switch (choice) {
-                case 1 -> {;
+                case 1 -> {
+                    ;
                     System.out.println("Listing all assets:");
                     for (Asset asset : market) {
                         System.out.println(asset.toString());
