@@ -14,7 +14,18 @@ CREATE TABLE assets (
     name VARCHAR(100) NOT NULL,
     asset_type VARCHAR(50) NOT NULL,
     price DECIMAL(15, 2) NOT NULL,
-    volatility_rate DECIMAL(5, 2) DEFAULT 0.00
+    volatility_rate DECIMAL(5, 2) DEFAULT 0.00,
+
+    -- Colonnes spécifiques aux Stocks (NULL pour Crypto)
+    dividend_yield FLOAT,
+    market_open_time TIME,
+    market_close_time TIME,
+
+    -- Colonnes spécifiques aux Cryptos (NULL pour Stock)
+    blockchain VARCHAR(100),
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 -- Table des wallets (1 wallet par user par type d'asset)
