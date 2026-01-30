@@ -39,4 +39,10 @@ public class Stock extends Asset {
     public void setMarketCloseTime(LocalTime marketCloseTime) {
         this.marketCloseTime = marketCloseTime;
     }
+
+    @Override
+    public boolean isMarketOpen() {
+        LocalTime now = LocalTime.now();
+        return !now.isBefore(marketOpenTime) && !now.isAfter(marketCloseTime);
+    }
 }
