@@ -56,6 +56,8 @@ public abstract class Asset {
         return type;
     }
 
+    public abstract boolean isMarketOpen();
+
     private void startPriceUpdater() {
         Thread priceUpdater = new Thread(() -> {
             while (!Thread.currentThread().isInterrupted()) {

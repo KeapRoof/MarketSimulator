@@ -17,4 +17,9 @@ public class Crypto extends Asset {
     public void setBlockchain(String blockchain) {
         this.blockchain = blockchain;
     }
+
+    @Override
+    public boolean isMarketOpen() {
+        return true; // Les cryptos sont ouvertes 24/7
+    }
 }
