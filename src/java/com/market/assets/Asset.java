@@ -77,4 +77,9 @@ public abstract class Asset {
         this.price *= (1 + change);
         if (this.price < 0.01) this.price = 0.01;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s (%s): $%.2f [%s]", name, ticker, price, type);
+    }
 }
