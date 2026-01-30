@@ -49,7 +49,7 @@ public class AssetDao {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                AssetType type = AssetType.valueOf(rs.getString("type"));
+                AssetType type = AssetType.valueOf(rs.getString("asset_type"));
                 return new Asset(
                         rs.getString("name"),
                         rs.getString("ticker"),
@@ -69,7 +69,7 @@ public class AssetDao {
 
     public boolean createAsset(Asset asset) {
         String sql = """
-            INSERT INTO assets (name, ticker, price, volatility_rate, type)
+            INSERT INTO assets (name, ticker, price, volatility_rate, asset_type)
             VALUES (?, ?, ?, ?, ?)
         """;
 
@@ -84,6 +84,43 @@ public class AssetDao {
 
             int rowsInserted = stmt.executeUpdate();
             return rowsInserted > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean saveAllAssets(List<Asset> assets) {
+        String sql = """
+            INSERT INTO assets (name, ticker, price, volatility_rate, asset_type)
+            VALUES (?, ?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE
+                name = VALUES(name),
+                price = VALUES(price),
+                volatility_rate = VALUES(volatility_rate),
+                asset_type = VALUES(asset_type)
+        """;
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            for (Asset asset : assets) {
+                stmt.setString(1, asset.getName());
+                stmt.setString(2, asset.getTicker());
+                stmt.setDouble(3, asset.getPrice());
+                stmt.setDouble(4, asset.getVolatilityRate());
+                stmt.setString(5, asset.getType().name());
+                stmt.addBatch();
+            }
+
+            int[] rowsAffected = stmt.executeBatch();
+            for (int count : rowsAffected) {
+                if (count == Statement.EXECUTE_FAILED) {
+                    return false;
+                }
+            }
+            return true;
 
         } catch (SQLException e) {
             e.printStackTrace();
