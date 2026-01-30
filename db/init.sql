@@ -1,4 +1,4 @@
--- Table des utilisateurs (inchangée)
+-- Table des utilisateurs
 CREATE TABLE users (
     id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
@@ -7,7 +7,7 @@ CREATE TABLE users (
     balance DECIMAL(15, 2) DEFAULT 0.00
 );
 
--- Table des actifs (inchangée)
+-- Table des actifs
 CREATE TABLE assets (
     id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
     ticker VARCHAR(10) UNIQUE NOT NULL,

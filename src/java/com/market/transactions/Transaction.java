@@ -9,6 +9,7 @@ import com.market.exceptions.WalletTypeMismatchException;
 import com.market.users.User;
 import com.market.wallet.Wallet;
 
+import java.math.BigDecimal;
 import java.time.LocalTime;
 
 public class Transaction {
@@ -42,7 +43,7 @@ public class Transaction {
         }
 
         // Déduire le montant de la balance de l'utilisateur
-        user.setBalance(user.getBalance().subtract(java.math.BigDecimal.valueOf(totalPrice)));
+        user.setBalance(user.getBalance().subtract(BigDecimal.valueOf(totalPrice)));
 
         // Ajouter l'asset au wallet (quantity fois)
         for (int i = 0; i < quantity; i++) {
