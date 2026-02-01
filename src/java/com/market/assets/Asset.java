@@ -84,4 +84,17 @@ public abstract class Asset {
     public String toString() {
         return String.format("%s (%s): $%.2f [%s]", name, ticker, price, type);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Asset asset = (Asset) o;
+        return ticker.equalsIgnoreCase(asset.ticker);
+    }
+
+    @Override
+    public int hashCode() {
+        return ticker.toUpperCase().hashCode();
+    }
 }
