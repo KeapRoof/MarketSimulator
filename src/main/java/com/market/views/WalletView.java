@@ -7,7 +7,8 @@ import com.market.wallet.Position;
 import com.market.wallet.Wallet;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class WalletView {
 
@@ -17,101 +18,107 @@ public class WalletView {
         this.walletDAO = walletDAO;
     }
 
-    private static void printPositionRow(Position position) {
-        double currentPrice = position.getAsset().getPrice();
-        double profitLoss = position.getProfitLoss();
-        String statusIcon = position.isProfitable() ? "✅" : "🔻";
+    public void displayWallet(User user, List<Asset> market) {
+        // 1. Synchronisation avec les prix du marché
+        Map<String, Double> currentMarketPrices = market.stream()
+                .collect(Collectors.toMap(Asset::getTicker, Asset::getPrice));
 
-        String profitLossStr = String.format("%.2f € (%.2f%%)",
-                profitLoss,
-                position.getProfitLossPercent());
-
-        System.out.printf("%-10s %-20s %12.4f %12.2f %12.2f %-15s %s%n",
-                position.getAsset().getTicker(),
-                truncate(position.getAsset().getName(), 20),
-                position.getQuantity(),
-                position.getAveragePurchasePrice(),
-                currentPrice,
-                profitLossStr,
-                statusIcon);
-    }
-
-    private static void printGlobalSummary(double totalValue, double totalPL) {
-        String trend = totalPL >= 0 ? "GAIN" : "PERTE";
-
-        System.out.println("\n" + "=".repeat(95));
-        System.out.printf(" VALEUR TOTALE DU PORTEFEUILLE : %10.2f €%n", totalValue);
-        System.out.printf(" PERFORMANCE GLOBALE (%s)    : %10.2f €%n", trend, totalPL);
-        System.out.println("=".repeat(95));
-    }
-
-    private static String truncate(String str, int width) {
-        if (str == null) return "";
-        if (str.length() <= width) return str;
-        return str.substring(0, width - 3) + "...";
-    }
-
-    public void displayWallet(User user, List<Asset> liveMarket) {
-        System.out.println("\n=== VOS POSITIONS (" + user.getUsername().toUpperCase() + ") ===");
+        System.out.println("\n========== 👤 YOUR PORTFOLIO ==========");
+        System.out.printf("User: %s%n", user.getUsername());
+        System.out.printf("Cash balance: %.2f €%n", user.getBalance());
+        System.out.println("======================================");
 
         List<Wallet> wallets = walletDAO.findAllByUser(user.getId());
 
-        if (wallets == null || wallets.isEmpty()) {
-            System.out.println("❌ Vous n'avez aucun portefeuille actif.");
+        if (wallets.isEmpty()) {
+            System.out.println("\n📭 No investments yet.");
+            System.out.println("Start trading to build your portfolio!");
             return;
         }
 
-        synchronizePrices(wallets, liveMarket);
-
+        double totalPortfolioValue = 0.0;
+        double totalProfitLoss = 0.0;
         boolean hasPositions = false;
-        double totalGlobalValue = 0;
-        double totalGlobalPL = 0;
 
         for (Wallet wallet : wallets) {
+            // Mise à jour des prix avant calcul
+            updateWalletPrices(wallet, currentMarketPrices);
+
             if (!wallet.isEmpty()) {
                 hasPositions = true;
-                printWalletSection(wallet);
-                totalGlobalValue += wallet.getTotalValue();
-                totalGlobalPL += wallet.getTotalProfitLoss();
+                displayWalletDetails(wallet);
+                totalPortfolioValue += wallet.getTotalValue();
+                totalProfitLoss += wallet.getTotalProfitLoss();
             }
         }
 
         if (!hasPositions) {
-            System.out.println("Votre portefeuille est actuellement vide.");
+            System.out.println("\n📭 No active positions in your wallets.");
         } else {
-            printGlobalSummary(totalGlobalValue, totalGlobalPL);
+            displayPortfolioSummary(user, totalPortfolioValue, totalProfitLoss);
         }
     }
 
-    private void synchronizePrices(List<Wallet> wallets, List<Asset> liveMarket) {
-        for (Wallet wallet : wallets) {
-            for (Position position : wallet.getPositions()) {
-                Optional<Asset> liveAsset = liveMarket.stream()
-                        .filter(a -> a.getTicker().equalsIgnoreCase(position.getAsset().getTicker()))
-                        .findFirst();
-
-                liveAsset.ifPresent(position::setAsset);
+    private void updateWalletPrices(Wallet wallet, Map<String, Double> prices) {
+        for (Position position : wallet.getPositions()) {
+            String ticker = position.getAsset().getTicker();
+            if (prices.containsKey(ticker)) {
+                position.getAsset().setPrice(prices.get(ticker));
             }
         }
     }
 
-    private void printWalletSection(Wallet wallet) {
-        System.out.println("\n--- WALLET " + wallet.getAssetType() + " ---");
-        System.out.printf("Valeur totale : %.2f €%n", wallet.getTotalValue());
+    private void displayWalletDetails(Wallet wallet) {
+        System.out.println("\n--- 💼 " + wallet.getAssetType() + " WALLET ---");
+        System.out.printf("Total value: %.2f €%n", wallet.getTotalValue());
+        System.out.printf("Total P/L: %.2f € (%.2f%%)%n",
+                wallet.getTotalProfitLoss(),
+                wallet.getTotalProfitLossPercent());
 
-        double pl = wallet.getTotalProfitLoss();
-        double plPercent = wallet.getTotalProfitLossPercent();
-        String plColor = pl >= 0 ? "✅" : "🔻";
-
-        System.out.printf("P/L total     : %.2f € (%.2f%%) %s%n", pl, plPercent, plColor);
-
-        System.out.println("\nPositions :");
-        System.out.printf("%-10s %-20s %-12s %-12s %-12s %-15s%n",
-                "TICKER", "NOM", "QUANTITÉ", "PRIX ACH.", "PRIX ACT.", "P/L");
+        System.out.println("\nPositions:");
+        System.out.printf("%-10s %-20s %12s %12s %12s %15s%n",
+                "TICKER", "NAME", "QUANTITY", "AVG PRICE", "CURR PRICE", "P/L");
         System.out.println("-".repeat(95));
 
         for (Position position : wallet.getPositions()) {
-            printPositionRow(position);
+            String profitLossStr = String.format("%.2f € (%.1f%%)",
+                    position.getProfitLoss(),
+                    position.getProfitLossPercent());
+
+            // Choix de l'emoji selon la performance
+            String emoji = position.isProfitable() ? "✅" : "❌";
+
+            System.out.printf("%-10s %-20s %12.4f %12.2f %12.2f %15s %s%n",
+                    position.getAsset().getTicker(),
+                    truncate(position.getAsset().getName(), 20),
+                    position.getQuantity(),
+                    position.getAveragePurchasePrice(),
+                    position.getAsset().getPrice(),
+                    profitLossStr,
+                    emoji);
         }
+    }
+
+    private void displayPortfolioSummary(User user, double totalPortfolioValue, double totalProfitLoss) {
+        double totalWealth = user.getBalance().doubleValue() + totalPortfolioValue;
+        double investedCapital = totalPortfolioValue - totalProfitLoss;
+        double plPercent = investedCapital > 0 ? (totalProfitLoss / investedCapital) * 100 : 0;
+
+        System.out.println("\n" + "=".repeat(95));
+        System.out.println("📊 PORTFOLIO SUMMARY");
+        System.out.println("=".repeat(95));
+        System.out.printf("Cash balance:        %12.2f €%n", user.getBalance());
+        System.out.printf("Invested value:      %12.2f €%n", totalPortfolioValue);
+        System.out.printf("Total wealth:        %12.2f €%n", totalWealth);
+        System.out.printf("Total P/L:           %12.2f € (%.2f%%) %s%n",
+                totalProfitLoss,
+                plPercent,
+                totalProfitLoss >= 0 ? "🚀" : "📉");
+        System.out.println("=".repeat(95));
+    }
+
+    private String truncate(String str, int maxLength) {
+        if (str == null) return "";
+        return (str.length() <= maxLength) ? str : str.substring(0, maxLength - 3) + "...";
     }
 }
