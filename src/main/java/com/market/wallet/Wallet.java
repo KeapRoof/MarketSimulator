@@ -23,15 +23,6 @@ public class Wallet {
         this.positions = (positions != null) ? new ArrayList<>(positions) : new ArrayList<>();
     }
 
-    // Constructeur pour nouveau wallet (avant persistance)
-    public Wallet(Long userId, AssetType assetType) {
-        this(null, userId, assetType, new ArrayList<>());
-    }
-
-    // Constructeur vide (pour compatibilité)
-    public Wallet() {
-        this(null, null, null, new ArrayList<>());
-    }
 
     public void addPosition(Asset asset, double quantity, double purchasePrice) {
         if (asset == null) {

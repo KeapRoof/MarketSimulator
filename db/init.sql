@@ -61,8 +61,8 @@ INSERT INTO assets (ticker, name, asset_type, price, volatility_rate) VALUES
     ('AAPL', 'Apple Inc.', 'Stock', 150.00, 0.01),
     ('MSFT', 'Microsoft Corporation', 'Stock', 300.00, 0.02),
     ('GOOGL', 'Alphabet Inc.', 'Stock', 2800.00, 0.03),
-    ('BTC', 'Bitcoin', 'Crypto', 45000.00, 0.07),
-    ('ETH', 'Ethereum', 'Crypto', 3000.00, 0.05);
+    ('BTC', 'Bitcoin', 'Crypto', 45000.00, 0.04),
+    ('ETH', 'Ethereum', 'Crypto', 3000.00, 0.04);
 
 -- Création automatique des wallets pour les utilisateurs
 INSERT INTO wallets (user_id, asset_type) VALUES
