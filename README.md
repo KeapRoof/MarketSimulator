@@ -1,35 +1,62 @@
 # Market Simulator
 
-## Java console application simulating a financial market.
+A Java console application that simulates a financial market with user authentication and asset trading capabilities.
 
-### Features
+## Features
 
-- User authentication (MariaDB)
-- List and search assets
-- Buy & Sell assets from a wallet
-- Command-line com.market.menu
+- **User Authentication** - Secure login system with MariaDB backend
+- **Asset Management** - Browse and search available financial assets
+- **Trading Operations** - Buy and sell assets through a personal wallet
+- **Interactive CLI** - Command-line menu interface for easy navigation
 
-### Technologies
+## Technologies
 
 - Java
 - JDBC
 - MariaDB
+- Docker
 
-### Run
+## Installation & Setup
 
-1. Add MariaDB driver to project
-2. Lunch docker compose
+### Prerequisites
 
-```bash
-docker compose up
+- Java Development Kit (JDK)
+- Docker and Docker Compose
+- MariaDB JDBC driver
+
+### Running the Application
+
+1. **Add MariaDB driver to your project**
+   
+   Download the MariaDB JDBC driver and add it to your project dependencies.
+
+2. **Start the database**
+   
+   ```bash
+   docker compose up
+   ```
+
+3. **Launch the application**
+   
+   Run the main Java application file.
+
+## Project Structure
+
+```
+market-simulator/
+├── src/
+│   └── com/market/
+│       └── menu/
+├── docker-compose.yml
+└── README.md
 ```
 
-3. Lunch app
+## Authors - Group 5
 
-### Authors
+- [Haithem](https://github.com/KeapRoof)
+- [Ramazan](https://github.com/Rameray1)
+- [Yanis](https://github.com/Taakeo)
 
-[Haithem](https://github.com/KeapRoof)
+## License
 
-[Ramazan](https://github.com/Rameray1)
-
-[Yanis](https://github.com/Taakeo)
+This project is part of an academic assignment.
