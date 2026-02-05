@@ -9,7 +9,7 @@ import com.market.views.WalletView;
 import java.util.List;
 import java.util.Scanner;
 
-public class Menu {
+public class Menu implements IMenu {
     private final TransactionHandler transactionHandler;
     private final WalletView walletView;
 
