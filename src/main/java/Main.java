@@ -26,23 +26,33 @@ public class Main {
         TransactionService transactionService = new TransactionService(transaction, userDAO, walletDAO);
         TransactionHandler transactionHandler = new TransactionHandler(transactionService, walletView);
 
-
         // Initialisation du Menu
         Menu menu = new Menu(transactionHandler, walletView);
 
         // Authentification
-        System.out.print("Username: ");
-        String username = scanner.nextLine();
-        System.out.print("Password: ");
-        String password = scanner.nextLine();
-
         AuthService authService = new AuthService();
+        boolean exit = false;
 
-        if (authService.authenticate(username, password)) {
-            System.out.println("Authentication successful!");
-            menu.showMenu(scanner, authService.getCurrentUser());
-        } else {
-            System.out.println("Authentication failed. Invalid username or password.");
+        while (!exit) {
+            System.out.print("Username (or type 'exit' to quit): ");
+            String username = scanner.nextLine();
+
+            if (username.equalsIgnoreCase("exit")) {
+                System.out.println("Exiting application. Goodbye!");
+                break;
+            }
+
+            System.out.print("Password: ");
+            String password = scanner.nextLine();
+
+            if (authService.authenticate(username, password)) {
+                System.out.println("Authentication successful!");
+                menu.showMenu(scanner, authService.getCurrentUser());
+                exit = true;
+            } else {
+                System.out.println("Authentication failed. Invalid username or password.");
+                System.out.println("Please try again or type 'exit' to quit.\n");
+            }
         }
 
         scanner.close();
